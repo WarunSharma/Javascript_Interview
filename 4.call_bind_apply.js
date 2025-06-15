@@ -1,3 +1,10 @@
+/*
+
+"call and apply are for method borrowing. You can call methods from another object; arguments are passed comma-separated in call and as an array in apply. bind returns a function to be called later."
+call and apply invoke a function with a specific this value — call uses comma-separated arguments, apply uses an array.
+bind returns a new function with this bound, which can be called later.
+*/
+
 /* 
     Call
     Use Case: Borrowing a method from another object
@@ -37,13 +44,7 @@ const person = {
   },
 };
 
-setTimeout(person.sayHello, 0); // Undefined
+person.sayHello();
+setTimeout(person.sayHello, 0); // Undefined, context of person is lost
+setTimeout(() => person.sayHello(), 0);
 setTimeout(person.sayHello.bind(person), 0);
-
-
-/*
-
-"call and apply are for method borrowing. You can call methods from another object; arguments are passed comma-separated in call and as an array in apply. bind returns a function to be called later."
-call and apply invoke a function with a specific this value — call uses comma-separated arguments, apply uses an array.
-bind returns a new function with this bound, which can be called later.
-*/
