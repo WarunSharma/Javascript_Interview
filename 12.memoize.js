@@ -1,3 +1,9 @@
+/*
+
+* Memoization is an optimization technique used to speed up function calls by caching the results of expensive function calls and returning the cached result when the same inputs occur again.
+
+*/
+
 function memoize(fn) {
   let cache = {};
   return function (...args) {

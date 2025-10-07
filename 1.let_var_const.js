@@ -8,15 +8,18 @@ Function Scope:
 function greet() {
     var message = "Hello";
     console.log(message); // Accessible here
-}
+}    
 console.log(message); // ❌ Not accessible
 
 Block Scope:
-{
+if (true){
     let name = "Warun";
     const age = 30;
     console.log(name, age); // ✅
 }
+for (let i = 0; i < 3; i++) {
+    console.log(i); // ✅
+}   
 console.log(name); // ❌ ReferenceError
 
 ✔️ var => function-scoped
@@ -89,3 +92,21 @@ let y = 2; // ❌ SyntaxError
 const z = 5;
 const z = 10; // ❌ SyntaxError
 */
+
+// var i = 1
+function main() {
+  for (var i = 0; i < 3; i++) {
+    setTimeout((i) => {
+      console.log(i); // 0, 1, 2
+    }, 1000, i);
+  }
+  console.log(i); // 3
+}
+main();
+
+// Declaration
+// var a = undefined; // Hoisted
+// var a = 1; // Reassigned
+
+// Definition
+// var a = 1;

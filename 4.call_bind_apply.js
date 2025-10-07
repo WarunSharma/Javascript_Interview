@@ -23,6 +23,24 @@ Users.forEach((user) => {
   greet.call(user, "Hello");
 });
 
+function User(name, occupation) {
+  this.name = name;
+  this.occupation = occupation;
+  this.greet = function (greeting) {
+    console.log(`${greeting} ${this.name}`);
+  };
+}
+
+const newUsers = [user1, user2, user3];
+
+const user1 = new User("Warun Sharma", "Engineer");
+const user2 = new User("Ankit Kapadia", "Social Activist");
+const user3 = new User("Sunidhi Rawat", "Cricketer");
+
+newUsers.forEach((user) => {
+  user.greet(user, "Hello");
+});
+
 /*
     Apply
     Use Case: Passing variable arguments to a function
@@ -37,6 +55,7 @@ console.log(maxSalary);
     Use Case: Passing Methods as Callbacks Without Losing Context
 */
 
+// Important: bind returns a new function with the context set, it does not call the function immediately.
 const person = {
   name: "Warun Sharma",
   sayHello() {

@@ -9,7 +9,7 @@ Closures are heavily used in data privacy, encapsulation, function factories, an
 
 function outer() {
   let counter = 0;
-  
+
   return function inner() {
     counter++;
     console.log(counter);
