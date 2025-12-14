@@ -1,40 +1,20 @@
 /*
+Reffered: https://www.youtube.com/watch?v=SpwzRDUQ1GI&t=7565s
+Simple TypeScript examples — kept minimal and clear.
+
+/*
 What is typescript ?
 - It is a strictly typed superset of javascript.
 - It transpiles to javascript to run in browser or node.
 - It adds types and compile time checking.
 */
 
-/*
-Basic types
-*/
-const personName: string = 'Warun Sharma';
-const age: number = 30;
-const canVote: boolean = true;
-
-/*
-Arrays
-*/
-const friends: string[] = ['Suman Dalh', 'Varinder Singh'];
-const friendsAge: number[] = [28, 32];
-
-/*
-Tuples: A tuple is a typed array with a pre-defined length and types for each index.
-*/
-let friendWithAge: [string, number] = ['Suman Dahl', 28];
-
-/*
-enum: An enum is a special "class" that represents a group of constants (unchangeable variables).
-*/
-
-enum Role {
-    USER = 0,
-    ADMIN,
-    SUPERADMIN
-}
-
-const myRole: Role = Role.ADMIN;
-console.log(myRole);
+/* Basic primitives */
+const myName: string = "Warun Sharma";
+const noOfWheels: number = 4;
+const isStudent: boolean = false;
+const nothing: null = null; // explicit absence
+const notAssigned: undefined = undefined; // "no value yet"
 
 /*
 any: The any type essentially disables TypeScript's type checking for the variable it's assigned to.
@@ -55,29 +35,28 @@ unknownData = 21;
 if (typeof unknownData === 'string')
     console.log(unknownData.toLowerCase());
 
-/*
-type
-*/
-type Student = {
-    name: string,
-    class: number | string
-}
+const big: bigint = 9007199254740991n;
+const sym = Symbol("id");
 
-/*
-interface: In TypeScript, an interface serves as a contract that defines the structure or "shape" of an object.
-*/
-interface Product {
-    name: string,
-    id: number,
-    price: number
+/* Arrays and tuple */
+const numbers: number[] = [1, 2, 3];
+const fruits: Array<string> = ["apple", "banana"];
+const userTuple: [string, number] = ["Alice", 30];
+
+/* Enum and union */
+// Enum: named set of related constants.
+
+enum Role {
+  Admin = "ADMIN",
+  User = "USER",
+  Guest = "GUEST",
 }
 
 /*
 Union: In TypeScript, a union type allows a variable or parameter to hold values of multiple specified types.
 It is declared using the pipe symbol (|) between the types.
 */
-let userId: string | number = 123;
-userId = '123';
+type UserRole = "admin" | "customer" | "rider";
 
 /*
 Intersection: In TypeScript, an intersection type allows for the combination of multiple types into a single,
@@ -104,84 +83,71 @@ type Car = {
     model?: string
 }
 
-const myCar = {number: 'XC23671908', brand: 'Celerio'};
+const myCar: Car = {number: 'XC23671908', brand: 'Celerio'};
 
-/*
-Literal types & type narrowing
-*/
-type Direction = 'Left' | 'Right';
-function move(dir: Direction) {
-    console.log(dir);
-}
-move('Right');
+/* Domain types */
+// Interface describes the shape of an object.
 
-/*
-Generics: Generics in TypeScript provide a way to create reusable and type-safe components that can work
-with a variety of data types, rather than being restricted to a single, fixed type.
-*/
-function wrapInArray<T>(value: T): T[] {
-    return [value];
+interface Address {
+  street: string;
+  readonly city: string;
+  zip?: string;
 }
 
-/*
-Decorators: A decorator is a special kind of declaration that can be attached to classes, methods, properties,
-accessors, or parameters to modify their behavior at runtime.
-*/
-
-function logger(constructor: Function) {
-    console.log('Logging function: ', constructor);
+interface Person {
+  id: number;
+  name: string;
+  age: number;
+  isStudent: boolean;
+  address?: Address;
 }
 
-@logger
-class User{
-    constructor(public name: string) {
+/* Sample data */
+const PERSONS: Person[] = [
+  { id: 1, name: "Warun", age: 31, isStudent: false },
+  { id: 2, name: "Abhishek", age: 31, isStudent: false },
+];
 
-    }
+/* Type narrowing: return possibly undefined */
+function getPersonDetails(identifier: number | string): Person | undefined {
+  if (typeof identifier === "string") {
+    return PERSONS.find((p) => p.name.toLowerCase() === identifier.toLowerCase());
+  }
+  return PERSONS.find((p) => p.id === identifier);
 }
 
-/*
-Create a generic ApiResponse<T> interface and use it for:
+/* Prefer specific types to `any`. Use Partial/Omit for payloads */
+const man: Partial<Person> = { name: "Abhishek", age: 31 };
 
-// user: { id: number; name: string }
-// product: { id: string; price: number }
-*/
-
-interface ApiResponse<T> {
-    status: number,
-    message: string,
-    data: T
+/* Create person helper using Omit (server assigns id) */
+function addPerson(payload: Omit<Person, "id">): Person {
+  const newPerson: Person = { id: PERSONS.length + 1, ...payload };
+  PERSONS.push(newPerson);
+  return newPerson;
 }
 
-interface User {
-    id: number | string,
-    name: string
+/* Generics — simple utility */
+function getLastItem<T>(arr: T[]): T | undefined {
+  return arr[arr.length - 1];
+}
+const lastNumber = getLastItem<number>(numbers);
+const lastFruit = getLastItem<string>(fruits);
+
+/* Type guard example */
+function isPerson(value: unknown): value is Person {
+  return typeof value === "object" && value !== null && "id" in (value as object) && "name" in (value as object);
 }
 
-interface Item {
-    id: number | string,
-    price: number
-}
-
-const userRespone: ApiResponse<User> = {
-    status: 200,
-    message: 'User created successfully',
-    data: {
-        id: 1,
-        name: 'Alice'
-    }
-}
-
-const itemResponse: ApiResponse<Item> = {
-    status: 200,
-    message: 'Item created successfully',
-    data: {
-        id: '1',
-        price: 3000
-    }
-}
-
-/*
-Use a union type to define LoginResult as either:
-// { success: true, token: string } | { success: false, error: string }
-*/
-const loginResult: {success: boolean, token: string} | {success: boolean, error: string} = { success: true, error: 'login failed'};
+/* Small demonstrations (safe/logging only) */
+console.log({
+  myName,
+  noOfWheels,
+  isStudent,
+  numbers,
+  userTuple,
+  Role,
+  lastNumber,
+  lastFruit,
+  found: getPersonDetails("Warun")?.name ?? "not found",
+  added: addPerson({ name: "Sneha", age: 28, isStudent: false }),
+});
